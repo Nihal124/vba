@@ -8,9 +8,9 @@ Sub RunPythonScriptWithConfirmation()
     ' Specify the path to your Python script
     PythonScriptPath = "C:\VS Code\Final_code_split_file_automation.py"
 
-    ' Use the cmd.exe to run the Python script with py.exe
+    ' Use the cmd.exe to run the Python script with py.exe after user confirmation
     Dim cmd As String
-    cmd = "cmd /k echo off & echo. & echo Run Python script? (y/n) & choice /n /c:yn & if errorlevel 2 exit & if errorlevel 1 py.exe """ & PythonScriptPath & """ & pause & exit"
+    cmd = "cmd /k echo off & echo. & set /p choice=Run Python script? (y/n): & if /i !choice! == y (py.exe """ & PythonScriptPath & """) else (echo Script not run) & pause & exit"
 
     ' Execute the command
     On Error Resume Next
