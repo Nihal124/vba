@@ -10,7 +10,7 @@ Sub RunPythonScriptWithUserPrompt()
 
     ' Use the cmd.exe to run the Python script with py.exe
     Dim cmd As String
-    cmd = "cmd /k echo off & echo Do you want to run the Python script? (y/n) & set /p userResponse= & if /i !userResponse! == y (py.exe """ & PythonScriptPath & """) else (echo Python script execution canceled.)"
+    cmd = "cmd /k echo off & set /p userResponse=Do you want to run the Python script? (y/n) & if /i !userResponse! == y (py.exe """ & PythonScriptPath & """) else (echo Python script execution canceled.)"
 
     ' Execute the command
     On Error Resume Next
