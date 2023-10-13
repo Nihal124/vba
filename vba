@@ -1,29 +1,38 @@
-Sub RunPythonScriptWithConfirmation()
+Sub RunPythonScript()
 
-    Dim objshell As Object
+    Dim objShell As Object
     Dim PythonScriptPath As String
 
-    Set objshell = VBA.CreateObject("Wscript.Shell")
+    Set objShell = VBA.CreateObject("Wscript.Shell")
 
     ' Specify the path to your Python script
     PythonScriptPath = "C:\VS Code\Final_code_split_file_automation.py"
 
-    ' Use the cmd.exe to run the Python script with py.exe after user confirmation
+    ' Use the cmd.exe to run the Python script with py.exe
     Dim cmd As String
-    cmd = "cmd /k echo off & echo. & set /p choice=Run Python script? (y/n): & if /i !choice! == y (py.exe """ & PythonScriptPath & """) else (echo Script not run) & pause & exit"
+    cmd = "cmd /k py.exe """ & PythonScriptPath & """"
 
-    ' Execute the command
-    On Error Resume Next
-    Dim result As Integer
-    result = objshell.Run(cmd, 1, True)
+    ' Display a message and ask for user input
+    Dim userInput As String
+    userInput = InputBox("Do you want to run the Python script (y/n)?", "User Input")
 
-    If result = 0 Then
-        MsgBox "Command Prompt opened."
+    If LCase(userInput) = "y" Then
+        ' Execute the command
+        On Error Resume Next
+        Dim result As Integer
+        result = objShell.Run(cmd, 1, True)
+        If result = 0 Then
+            MsgBox "Python script executed successfully."
+        Else
+            MsgBox "Error executing Python script. Error code: " & result
+        End If
+    ElseIf LCase(userInput) = "n" Then
+        MsgBox "Python script execution canceled by user."
     Else
-        MsgBox "Error opening Command Prompt. Error code: " & result
+        MsgBox "Invalid input. Please enter 'y' to run the script or 'n' to cancel."
     End If
 
     ' Release the object
-    Set objshell = Nothing
+    Set objShell = Nothing
 
 End Sub
