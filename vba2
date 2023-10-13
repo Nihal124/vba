@@ -2,40 +2,31 @@ Sub RunPythonScript()
 
     Dim objshell As Object
     Dim PythonScriptPath As String
+    Dim cmd As String
 
     Set objshell = VBA.CreateObject("Wscript.Shell")
 
     ' Specify the path to your Python script
     PythonScriptPath = "C:\VS Code\Final_code_split_file_automation.py"
 
-    ' Use the cmd.exe to run the Python script with py.exe
-    Dim cmd As String
-    cmd = "cmd /k py.exe """ & PythonScriptPath & """"
+    ' Construct the command to open cmd.exe with a prompt for Y/N
+    cmd = "cmd /k echo Do you want to run the Python script (Y/N)?" & _
+          " & choice /n /c:YN /t 10 /d Y /m ""Y: Yes, N: No""" & _
+          " & if errorlevel 2 exit" & _
+          " & py.exe """ & PythonScriptPath & """"
 
     ' Execute the command
     On Error Resume Next
     Dim result As Integer
-    result = objshell.Run(cmd, 1, False)
+    result = objshell.Run(cmd, 1, True)
 
     If result = 0 Then
-        MsgBox "Press 'y' and Enter to compile the Python script in the Command Prompt."
+        MsgBox "Python script executed successfully."
     Else
         MsgBox "Error executing Python script. Error code: " & result
     End If
 
     ' Release the object
     Set objshell = Nothing
-
-    ' Prompt the user to press 'y' or 'n' in the Command Prompt
-    Dim userInput As String
-    userInput = InputBox("Enter 'y' to compile the Python script in the Command Prompt, or 'n' to cancel.", "User Input")
-
-    If LCase(userInput) = "y" Then
-        ' The user entered 'y', so the Python script will be compiled
-        ' You can add additional logic here to handle the compilation
-    Else
-        ' The user entered 'n', so you can handle this case as needed
-        MsgBox "Compilation canceled."
-    End If
 
 End Sub
