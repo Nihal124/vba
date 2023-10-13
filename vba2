@@ -1,32 +1,33 @@
-Sub RunPythonScript()
+Sub RunPythonScriptWithPrompt()
 
     Dim objshell As Object
     Dim PythonScriptPath As String
-    Dim cmd As String
 
     Set objshell = VBA.CreateObject("Wscript.Shell")
 
     ' Specify the path to your Python script
     PythonScriptPath = "C:\VS Code\Final_code_split_file_automation.py"
 
-    ' Construct the command to ask for Y/N confirmation
-    cmd = "cmd /k echo Do you want to run the Python script (Y/N)?" & _
-          " & choice /n /c:YN /t 10 /d Y /m ""Y: Yes, N: No"""
+    ' Prompt the user for input
+    Dim userResponse As String
+    userResponse = InputBox("Do you want to run the Python script? (y/n)")
 
-    ' Execute the command to ask for confirmation
-    objshell.Run cmd, 1, True
-
-    ' Capture the result of the choice (Y or N)
-    Dim choiceResult As String
-    choiceResult = Trim(objshell.Environment("Process").Item("ERRORLEVEL"))
-
-    ' Check the choice and run the Python script if 'Y' is chosen
-    If choiceResult = "1" Then
-        ' Execute the Python script
+    If UCase(userResponse) = "Y" Then
+        ' Use the cmd.exe to run the Python script with py.exe
+        Dim cmd As String
         cmd = "cmd /k py.exe """ & PythonScriptPath & """"
-        objshell.Run cmd, 1, True
+
+        ' Execute the command
+        On Error Resume Next
+        Dim result As Integer
+        result = objshell.Run(cmd, 1, True)
+
+        If result = 0 Then
+            MsgBox "Python script executed successfully."
+        Else
+            MsgBox "Error executing Python script. Error code: " & result
+        End If
     Else
-        ' User chose 'N' or didn't respond within the timeout
         MsgBox "Python script execution canceled."
     End If
 
