@@ -1,4 +1,4 @@
-Sub RunPythonScriptWithUserPrompt()
+Sub RunPythonScript()
 
     Dim objshell As Object
     Dim PythonScriptPath As String
@@ -10,12 +10,18 @@ Sub RunPythonScriptWithUserPrompt()
 
     ' Use the cmd.exe to run the Python script with py.exe
     Dim cmd As String
-    cmd = "cmd /k echo off & set /p userResponse=Do you want to run the Python script? (y/n) & if /i !userResponse! == y (py.exe """ & PythonScriptPath & """) else (echo Python script execution canceled.)"
+    cmd = "cmd /k py.exe """ & PythonScriptPath & """"
 
     ' Execute the command
     On Error Resume Next
     Dim result As Integer
     result = objshell.Run(cmd, 1, True)
+
+    If result = 0 Then
+        MsgBox "Python script executed successfully."
+    Else
+        MsgBox "Error executing Python script. Error code: " & result
+    End If
 
     ' Release the object
     Set objshell = Nothing
