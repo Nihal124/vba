@@ -17,12 +17,23 @@ Sub RunPythonScript()
     userInput = InputBox("Do you want to run the Python script (y/n)?", "User Input")
 
     If LCase(userInput) = "y" Then
+        ' Disable Excel's display alerts temporarily
+        Application.DisplayAlerts = False
+        
         ' Execute the command
         On Error Resume Next
         Dim result As Integer
         result = objShell.Run(cmd, 1, True)
+        
+        ' Re-enable Excel's display alerts
+        Application.DisplayAlerts = True
+        
         If result = 0 Then
-            MsgBox "Python script executed successfully."
+            ' Delete the default Sheet1 without confirmation
+            Application.DisplayAlerts = False
+            ThisWorkbook.Sheets("Sheet1").Delete
+            Application.DisplayAlerts = True
+            MsgBox "Python script executed successfully, and Sheet1 is deleted."
         Else
             MsgBox "Error executing Python script. Error code: " & result
         End If
