@@ -1,1 +1,1 @@
-RANK() OVER ([Product] ORDER BY [Sales] DESC) AS ProductRank
+SUM(1) OVER(PARTITION BY [] ORDER BY [Sales] DESC) AS ProductRank
