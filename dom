@@ -1,0 +1,9 @@
+CASE
+    WHEN DAYOFWEEK(date_column) = 1 THEN 'Sunday'
+    WHEN DAYOFWEEK(date_column) = 2 THEN 'Monday'
+    WHEN DAYOFWEEK(date_column) = 3 THEN 'Tuesday'
+    WHEN DAYOFWEEK(date_column) = 4 THEN 'Wednesday'
+    WHEN DAYOFWEEK(date_column) = 5 THEN 'Thursday'
+    WHEN DAYOFWEEK(date_column) = 6 THEN 'Friday'
+    WHEN DAYOFWEEK(date_column) = 7 THEN 'Saturday'
+END AS day_of_week
