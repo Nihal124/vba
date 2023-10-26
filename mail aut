@@ -1,1 +1,41 @@
+def create_customized_message(to, cc, bcc, owning_office):
+    recipients = to.split(",")
+    cc_recipients = cc.split(",")
+    bcc_recipients = bcc.split(",")
 
+    subject = "Data Quality Management Report : " + owning_office
+
+    attachment_path = attachment_directory + owning_office + ".xlsx"
+    kpi_path = kpi_directory + owning_office + ".png"
+
+    body = """Hello Team,<br><br>
+
+        We are delighted to introduce you to the all-new <b>DQM Dashboard</b>. Click <a href="https://firstam.domo.com/page/1541220459">here</a> to access.<br><br>
+
+        It is a powerful tool that enables you to monitor your DQM files on a daily basis, ensuring that all remediated files are synced and removed promptly. Here are some benefits of using this dashboard:<br><br>
+        •  <b>Improve Your DQM Score</b><br>
+            &emsp;  o With daily monitoring of your files, you can ensure that all remediations are carried out in a timely and effective manner, which can help improve your DQM score.<br><br>
+        •  <b>Sync and Remove Remediated Files</b><br>
+            &emsp;  o The dashboard syncs and removes all remediated files automatically, which saves you time and effort. No need to manually check and remove files that have been fixed!<br><br>
+        •  <b>Sync and Remove Exception Files</b><br>
+            &emsp;  o In addition to remediated files, the dashboard also syncs and removes any exception files. This ensures that you always have an up-to-date view of your DQM status.<br><br>
+
+        Please find attached your office file which highlights the data gaps for each file in FAST orders.<br><br>
+
+
+        Highlight color codes:<br>
+        &emsp; <span style="color:red;">RED-</span>        &emsp;&emsp;&emsp;       Data needs to be modified or removed.<br>
+        &emsp; <span style="color:yellow;">YELLOW-</span>  &emsp;       Data is blank which requires an update.<br>
+        &emsp; <span style="color:orange;">ORANGE-</span>   &emsp;      Policy status requires change from 'Edited' to 'Finalized'.<br><br>
+
+
+        If you find any of the files which are exceptions to the rules, please mail to NCS_Data_Quality@firstam.com for a manual exclusion with reason.<br><br>
+
+        Thanks & Regards,<br>
+        NCS Data Quality Team.
+        """
+
+    return (recipients, cc_recipients, bcc_recipients, subject, body, attachment_path, kpi_path)
+
+
+    
