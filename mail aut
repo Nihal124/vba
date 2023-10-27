@@ -45,4 +45,10 @@ for index, row in dataset.iterrows():
     
         mail.Display()
     #mail.Send()
-    
+
+
+
+
+Owning Office	TO	CC	BCC
+0	Akron	aakkumar@firstam.com, vraman@firstam.com	mnihal@firstam.com	mnihal@firstam.com
+1	Atlanta	mnihal@firstam.com	aakkumar@firstam.com, vraman@firstam.com	aakkumar@firstam.com, vraman@firstam.com
