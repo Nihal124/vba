@@ -1,0 +1,87 @@
+import win32com.client as win32
+from time import sleep
+
+# Initialize Excel Application
+excel = win32.gencache.EnsureDispatch('Excel.Application')
+
+# Open the workbook in Excel
+wb = excel.Workbooks.Open(r"C:\VS Code\DQM KPI.xlsx")
+
+# Get references to the worksheets
+data_sheet = wb.Sheets('Data')
+splitfiles_sheet = wb.Sheets('SplitFiles')
+report_sheet = wb.Sheets('Report1')
+screenshot_sheet = wb.Sheets('Screenshot')
+
+# Clear previous screenshots in the 'Screenshot' sheet
+for shape in screenshot_sheet.Shapes:
+    shape.Delete()
+
+
+# get the office count
+office_count = splitfiles_sheet.Cells(splitfiles_sheet.Rows.Count, 1).End(win32.constants.xlUp).Row - 1
+
+# get column indexes
+columns = [cell.Value for cell in data_sheet.Range("A1:AH1")]
+off_col = columns.index('Owning Office') + 1
+sco_col = columns.index('Completion %') + 1
+fil_col = columns.index('Closed File Count') + 1
+esl_col = columns.index('Est. Liab') + 1
+prt_col = columns.index('Pro. Type') + 1
+
+last_row = 1  
+
+# Iterate through offices
+for r in range(2, office_count + 2):
+    # Get office name
+    office_temp = splitfiles_sheet.Cells(r, 1).Value
+
+    # Construct office name strings
+    office_name = office_temp
+    office_name_cw = office_name + "-" + "CW"
+    office_name_pw = office_name + "-" + "PW"
+
+    # Find office name in Data sheet
+    off_rows_cw = data_sheet.Columns(25).Find(What=office_name_cw, LookIn=win32.constants.xlValues).Row
+    off_rows_pw = data_sheet.Columns(25).Find(What=office_name_pw).Row
+
+    # Extract data for CW and PW
+    # Here is an example for CW, do the same for PW
+    off_name_cw = data_sheet.Cells(off_rows_cw, off_col).Value
+    score_per_cw = data_sheet.Cells(off_rows_cw, sco_col).Value
+    file_cou_cw = int(data_sheet.Cells(off_rows_cw, fil_col).Value)
+    est_liab_cw = int(data_sheet.Cells(off_rows_cw, esl_col).Value)
+    pro_type_cw = int(data_sheet.Cells(off_rows_cw, prt_col).Value)
+
+    off_name_pw = data_sheet.Cells(off_rows_pw, off_col).Value
+    score_per_pw = data_sheet.Cells(off_rows_pw, sco_col).Value
+    file_cou_pw = int(data_sheet.Cells(off_rows_pw, fil_col).Value)
+    est_liab_pw = int(data_sheet.Cells(off_rows_pw, esl_col).Value)
+    pro_type_pw = int(data_sheet.Cells(off_rows_pw, prt_col).Value)
+
+    # Update text boxes in Report1 sheet
+    report_sheet.Shapes("Rectangle 7").TextFrame2.TextRange.Text = office_name
+    report_sheet.Shapes("Rectangle 5").TextFrame2.TextRange.Text = "Score " + str(score_per_cw) + "%"
+    report_sheet.Shapes("Rectangle 6").TextFrame2.TextRange.Text = "Previous Week " + str(score_per_pw) + "%"
+    report_sheet.Shapes("Rectangle 9").TextFrame2.TextRange.Text = "Open & Closed Files " + str(file_cou_cw)
+    report_sheet.Shapes("Rectangle 10").TextFrame2.TextRange.Text = "Previous Week " + str(file_cou_pw)
+    report_sheet.Shapes("Rectangle 12").TextFrame2.TextRange.Text = "Missing Estimated Liabilities " + str(est_liab_cw)
+    report_sheet.Shapes("Rectangle 13").TextFrame2.TextRange.Text = "Previous Week " + str(est_liab_pw)
+    report_sheet.Shapes("Rectangle 15").TextFrame2.TextRange.Text = "Invalid Property Type " + str(pro_type_pw)
+    report_sheet.Shapes("Rectangle 16").TextFrame2.TextRange.Text = "Previous Week " + str(pro_type_pw)
+
+
+    # Make a screenshot
+    screenshot_sheet.Select()  
+    report_sheet.Range("A1:Q17").CopyPicture(Appearance=win32.constants.xlScreen, Format=win32.constants.xlPicture)  
+    sleep(1)
+    screenshot_sheet.Paste(screenshot_sheet.Range("A" + str(last_row)))
+
+    # Wait for 1 second
+    sleep(1)
+
+    # Move last_row down by the height of the screenshot plus 3 rows  
+    last_row += screenshot_sheet.Range("A1:Q17").Rows.Count + 3  
+
+wb.Save()
+wb.Close()
