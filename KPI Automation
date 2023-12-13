@@ -1,32 +1,35 @@
-import os
-import time
 import win32com.client
+import os
 
-# create an instance of Excel
-excel = win32com.client.Dispatch("Excel.Application")
+def export_screenshot_to_png():
+    # Start an instance of Excel
+    excel = win32com.client.Dispatch("Excel.Application")
 
-# open the workbook and select the worksheet
-wb = excel.Workbooks.Open(r"C:\VS Code\DQM KPI.xlsx")
-ws = wb.Worksheets("Sheet1")
+    # Open the workbook
+    workbook = excel.Workbooks.Open(r'path\to\your\workbook.xlsx') # replace with your file path
 
-# get the dimensions of the worksheet
-ws_width = ws.Columns("A:Z").Width
-ws_height = ws.Rows("1:50").Height
+    # Select the sheet
+    screenshot_sheet = workbook.Worksheets("Screenshot")
 
-# create a bitmap of the worksheet
-bitmap = win32com.client.Dispatch("WIA.ImageFile")
-bitmap = bitmap.FromBitmap(excel.Application.ActiveWindow.GetWindowRect())
+    # Loop over all shapes in the worksheet
+    for shape in screenshot_sheet.Shapes:
+        export_shape_to_png(shape, screenshot_sheet)
 
-# crop the bitmap to the dimensions of the worksheet
-bitmap = bitmap.Crop(0, 0, ws_width, ws_height)
+    # Save shape count to main sheet
+    workbook.Worksheets("Main").Range("H24").Value = screenshot_sheet.Shapes.Count
 
-# save the bitmap as a PNG file in the C:\VS Code\KPI directory
-dir_path = r"C:\VS Code\KPI"
-if not os.path.exists(dir_path):
-    os.makedirs(dir_path)
-file_path = os.path.join(dir_path, "worksheet.png")
-bitmap.SaveFile(file_path)
+    # Cleanup
+    excel.Quit()
 
-# close the workbook and quit Excel
-wb.Close(SaveChanges=False)
-excel.Quit()
+def export_shape_to_png(shape, sheet):
+    # Copy the shape as picture
+    shape.CopyPicture()
+
+    # Create a new chart, paste in the picture, and export it
+    chart = sheet.ChartObjects().Add(0, 0, shape.Width, shape.Height)
+    chart.Chart.Paste()
+    chart.Chart.Export(r"C:\DQM-KPI\{}.png".format(shape.Name))
+    chart.Delete()
+
+# Run the script
+export_screenshot_to_png()
